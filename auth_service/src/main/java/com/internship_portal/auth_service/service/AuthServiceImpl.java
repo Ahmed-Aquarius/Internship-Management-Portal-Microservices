@@ -8,13 +8,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthenticationService {
+public class AuthServiceImpl implements AuthService {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public AuthenticationService(UserService userService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthServiceImpl(UserService userService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -22,6 +22,7 @@ public class AuthenticationService {
 
 
 
+    @Override
     public String authenticate(LoginDTO credentials) {
 
         User candidateUser = userService.findUserByUsername(credentials.username());

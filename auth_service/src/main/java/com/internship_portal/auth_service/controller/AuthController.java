@@ -2,7 +2,7 @@ package com.internship_portal.auth_service.controller;
 
 import com.internship_portal.auth_service.dto.LoginDTO;
 import com.internship_portal.auth_service.model.User;
-import com.internship_portal.auth_service.service.AuthenticationService;
+import com.internship_portal.auth_service.service.AuthServiceImpl;
 //import com.example.internship_portal.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
-    private final AuthenticationService authenticationService;
+    private final AuthServiceImpl authServiceImpl;
 
-    public AuthController(UserService userService, AuthenticationService authenticationService) {
+    public AuthController(UserService userService, AuthServiceImpl authServiceImpl) {
         this.userService = userService;
-        this.authenticationService = authenticationService;
+        this.authServiceImpl = authServiceImpl;
     }
 
 
@@ -31,7 +31,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody LoginDTO credentials) {
 
-        String jwtToken = authenticationService.authenticate(credentials);
+        String jwtToken = authServiceImpl.authenticate(credentials);
         return ResponseEntity.ok(jwtToken);
     }
 }
