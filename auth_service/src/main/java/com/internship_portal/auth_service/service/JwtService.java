@@ -22,18 +22,15 @@ public class JwtService {
 
 
 
-    public String generateToken(Long userId, String username, Set<Role> roles) {
+    public String generateToken(String username, Set<User.Role> roles) {
 
-        List<Role> rolesList = new ArrayList<>(roles);
-
-        List<String> roleNamesStringList = rolesList.stream()
-                .map(role -> role.getRole().toString())
+        List<String> rolesAsString = roles.stream()
+                .map(User.Role::name)
                 .toList();
-
 
         return Jwts.builder()
                 .setSubject(username)
-                .claim("roles", roleNamesStringList)
+                .claim("roles", rolesAsString)
                 .setIssuedAt(new Date (System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationPeriod))
                 .signWith(SignatureAlgorithm.HS256, getSigningKey())

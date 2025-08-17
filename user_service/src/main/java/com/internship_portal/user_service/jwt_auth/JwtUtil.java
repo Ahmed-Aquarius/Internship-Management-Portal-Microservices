@@ -1,7 +1,6 @@
 package com.internship_portal.user_service.jwt_auth;
 
-import com.internship_portal.auth_service.exception.auth.TokenExpiredException;
-import com.internship_portal.auth_service.exception.auth.UsernameNotMatchUserIdException;
+import com.internship_portal.user_service.exception.auth.TokenExpiredException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -21,7 +20,7 @@ public class JwtUtil {
 
 
 
-    public boolean isTokenValid(String token) throws UsernameNotMatchUserIdException, TokenExpiredException {
+    public boolean isTokenValid(String token) throws TokenExpiredException {
         try {
 
             if (isTokenExpired(token)) {
@@ -50,10 +49,8 @@ public class JwtUtil {
 
     public Set<String> extractRoles(String token) {
 
-        // Extract the list of role names (as strings) from the token
         List<String> rolesList = extractClaim(token, claims -> claims.get("roles", List.class));
         return new HashSet<>(rolesList);
-
     }
 
 

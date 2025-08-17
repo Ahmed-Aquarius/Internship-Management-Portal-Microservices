@@ -2,8 +2,8 @@ package com.internship_portal.user_service.jwt_auth;
 
 
 
-import com.internship_portal.auth_service.exception.auth.AuthorizationHeaderNotFoundException;
-import com.internship_portal.auth_service.exception.auth.InvalidJwtTokenException;
+import com.internship_portal.user_service.exception.auth.AuthorizationHeaderNotFoundException;
+import com.internship_portal.user_service.exception.auth.InvalidJwtTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

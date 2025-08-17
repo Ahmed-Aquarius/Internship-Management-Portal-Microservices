@@ -1,4 +1,4 @@
-package com.internship_portal.auth_service.exception.auth;
+package com.internship_portal.user_service.exception.auth;
 
 public class TokenExpiredException extends RuntimeException {
     public TokenExpiredException() {

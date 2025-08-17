@@ -1,11 +1,15 @@
 package com.internship_portal.user_service.controller;
 
+import com.internship_portal.user_service.dto.UserCredentialsDTO;
+import com.internship_portal.user_service.exception.NoSuchUserException;
 import com.internship_portal.user_service.model.User;
+import com.internship_portal.user_service.repository.UserRepository;
 import com.internship_portal.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -44,6 +48,18 @@ public class UserController {
     @GetMapping("{id}")
     public User getUserById(@PathVariable Long id) {
         return userService.findUserById(id);
+    }
+
+    @GetMapping("{username}")
+    public UserCredentialsDTO getUserSecurityDetails (@PathVariable String username) {
+
+        User targetUser = userService.findUserByUsername(username);
+
+        if (targetUser == null) {
+            throw new NoSuchUserException("no user with this username was found");
+        }
+
+        return new UserCredentialsDTO(username, targetUser.getPassword());
     }
 
     @PostMapping()

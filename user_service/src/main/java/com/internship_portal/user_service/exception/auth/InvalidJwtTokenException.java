@@ -1,4 +1,4 @@
-package com.internship_portal.auth_service.exception.auth;
+package com.internship_portal.user_service.exception.auth;
 
 public class InvalidJwtTokenException extends Exception {
     public InvalidJwtTokenException() {

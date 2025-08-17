@@ -1,7 +1,7 @@
 package com.internship_portal.auth_service.service;
 
 
-import com.internship_portal.auth_service.dto.LoginDTO;
+import com.internship_portal.auth_service.dto.UserCredentialsDTO;
 import com.internship_portal.auth_service.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,19 +20,12 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public String authenticate(LoginDTO credentials) {
+    public String authenticate(UserCredentialsDTO inputCredentials, User targetUser) {
 
-        //make a call to the user service to fetch the required details
-        User candidateUser = userService.findUserByUsername(credentials.username());
-
-        if (candidateUser == null) {
-            throw new IllegalArgumentException("No user with such username");
-        }
-
-        if (!passwordEncoder.matches(credentials.password(), candidateUser.getPassword())) {
+        if (!passwordEncoder.matches(inputCredentials.password(), targetUser.getPassword())) {
             throw new IllegalArgumentException("Invalid password");
         }
 
-        return JwtService.generateToken(candidateUser.getId(), candidateUser.getUsername(), candidateUser.getRoles());
+        return JwtService.generateToken(targetUser.getUsername(), targetUser.getRoles());
     }
 }

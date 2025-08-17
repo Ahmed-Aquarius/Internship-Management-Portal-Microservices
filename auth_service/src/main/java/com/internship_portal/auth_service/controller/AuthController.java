@@ -1,36 +1,65 @@
 package com.internship_portal.auth_service.controller;
 
-import com.internship_portal.auth_service.dto.LoginDTO;
+import com.internship_portal.auth_service.dto.UserCredentialsDTO;
+import com.internship_portal.auth_service.dto.RegisterUserDTO;
 import com.internship_portal.auth_service.model.User;
 import com.internship_portal.auth_service.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService authService;
+    private final RestTemplate restTemplate;
+    private final WebClient.Builder webClientBuilder;
 
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, RestTemplate restTemplate, WebClient.Builder webClientBuilder) {
         this.authService = authService;
+        this.restTemplate = restTemplate;
+        this.webClientBuilder = webClientBuilder;
     }
 
 
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
+    public ResponseEntity<String> registerUser(@RequestBody RegisterUserDTO userDetails) {
 
-        //make a call to the userService to add the new user
-        return ResponseEntity.ok("User registered successfully!");
+//        RegisterUserDTO generatedUser = webClientBuilder.build()
+//                .post()
+//                .uri("http://user-service/api/users")
+//                .bodyValue(userDetails)
+//                .retrieve()
+//                .bodyToMono(RegisterUserDTO.class)
+//                .block();
+//user-service
+
+        //restTemplate.getForEntity("http://localhost:8082/api/users/admins", RegisterUserDTO.class);
+
+        RegisterUserDTO generatedUser = restTemplate.postForEntity("http://localhost:8082/api/users", userDetails, RegisterUserDTO.class).getBody();
+
+        String response = "User registered successfully!\n\n" + "the created user in the db is:\n" + generatedUser;
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginDTO credentials) {
+    public ResponseEntity<String> loginUser(@RequestBody UserCredentialsDTO inputCredentials) {
 
-        String jwtToken = authService.authenticate(credentials);
+        User targetUser = webClientBuilder.build()
+                .get()
+                .uri("http://USER_SERVICE/api/users/" + inputCredentials.username())
+                .retrieve()
+                .bodyToMono(User.class)
+                .block();
+
+        String jwtToken = authService.authenticate(inputCredentials, targetUser);
+
         return ResponseEntity.ok(jwtToken);
     }
 }
