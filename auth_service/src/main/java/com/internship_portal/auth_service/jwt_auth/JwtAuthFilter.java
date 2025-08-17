@@ -1,13 +1,9 @@
-package com.internship_portal.auth_service.filter;
+package com.internship_portal.auth_service.jwt_auth;
 
 
 
-import com.internship_portal.auth_service.exception.AuthorizationHeaderNotFoundException;
-import com.internship_portal.auth_service.exception.InvalidJwtTokenException;
-import com.internship_portal.auth_service.exception.UserIdNotFoundException;
-import com.internship_portal.auth_service.model.Role;
-import com.internship_portal.auth_service.model.User;
-import com.internship_portal.auth_service.util.JwtUtil;
+import com.internship_portal.auth_service.exception.auth.AuthorizationHeaderNotFoundException;
+import com.internship_portal.auth_service.exception.auth.InvalidJwtTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,15 +25,13 @@ import java.util.stream.Collectors;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
-    private final UserService userService;
+    private final JwtUtil JwtUtil;
 
 
 
     @Autowired
-    public JwtAuthFilter (JwtUtil jwtUtil, UserService userService) {
-        this.jwtUtil = jwtUtil;
-        this.userService = userService;
+    public JwtAuthFilter (JwtUtil JwtUtil) {
+        this.JwtUtil = JwtUtil;
     }
 
 
@@ -46,7 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
-            throws ServletException, IOException {
+            throws IOException, ServletException {
 
         // Skip authentication for /auth endpoints
         String path = request.getRequestURI();
@@ -72,24 +66,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             // extract user details from the token extracted from header
             String token = authHeader.substring(7);     // Remove "Bearer " section
-
-            String username = jwtUtil.extractUsername(token);
-            User potentialUser = userService.findUserByUsername(username);
-            if (potentialUser == null) {
-                throw new UserIdNotFoundException();
-            }
-
-            Set<Role> roles = jwtUtil.extractRoles(potentialUser, token);
-
+            String username = JwtUtil.extractUsername(token);
+            Set<String> roles = JwtUtil.extractRoles(token);
             List<GrantedAuthority> authorities = roles.stream()
-                    .map(role -> new SimpleGrantedAuthority(role.getRole().toString()))
+                    .map(role -> new SimpleGrantedAuthority(role))
                     .collect(Collectors.toList());
 
-
-            if (jwtUtil.isTokenValid(token, potentialUser))
+            if (JwtUtil.isTokenValid(token))
             {
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(potentialUser, null, authorities);
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

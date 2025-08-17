@@ -3,21 +3,18 @@ package com.internship_portal.auth_service.service;
 
 import com.internship_portal.auth_service.dto.LoginDTO;
 import com.internship_portal.auth_service.model.User;
-import com.internship_portal.auth_service.util.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
+    private final JwtService JwtService;
 
-    public AuthServiceImpl(UserService userService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
-        this.userService = userService;
+    public AuthServiceImpl(JwtService JwtService, PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
+        this.JwtService = JwtService;
     }
 
 
@@ -25,6 +22,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String authenticate(LoginDTO credentials) {
 
+        //make a call to the user service to fetch the required details
         User candidateUser = userService.findUserByUsername(credentials.username());
 
         if (candidateUser == null) {
@@ -35,6 +33,6 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("Invalid password");
         }
 
-        return jwtUtil.generateToken(candidateUser.getId(), candidateUser.getUsername(), candidateUser.getRoles());
+        return JwtService.generateToken(candidateUser.getId(), candidateUser.getUsername(), candidateUser.getRoles());
     }
 }

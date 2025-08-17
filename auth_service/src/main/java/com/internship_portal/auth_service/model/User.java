@@ -39,11 +39,6 @@ public class User {
     @NotBlank(message = "Email is required")
     protected String email;
     
-    @Column(name = "full_name", nullable = false, length = 100)
-    @NotBlank(message = "Full name is required")
-    @Size(max = 100, message = "Full name cannot exceed 100 characters")
-    protected String fullName;
-    
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     protected Boolean isActive = true;
     
@@ -55,28 +50,32 @@ public class User {
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime lastUpdatedAt = LocalDateTime.now();
 
-    @OneToMany(
-        mappedBy = "user",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.EAGER
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "user-role",
+            joinColumns = @JoinColumn(name = "user_id")
     )
+    @Column(name = "role")
     @NotEmpty(message = "User must have at least one role")
     @Valid
     protected Set<Role> roles = new HashSet<>();
 
 
 
+    public enum Role {
+        INTERN, MENTOR, ADMIN
+    }
 
-    public User(String username, String password, String email, String fullName) {
+
+
+    public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.fullName = fullName;
     }
 
-    public User(String username, String password, String email, String fullName, Set<Role> roles) {
-        this (username, password, email, fullName);
+    public User(String username, String password, String email, Set<Role> roles) {
+        this (username, password, email);
         this.roles = roles;
     }
 
@@ -84,10 +83,6 @@ public class User {
 
 
 
-
-    public Long getId() {
-        return id;
-    }
 
     public @NotBlank(message = "Username is required") @Size(min = 5, max = 30, message = "Username must be between 5 and 30 characters") String getUsername() {
         return username;
@@ -97,20 +92,8 @@ public class User {
         return password;
     }
 
-    public @NotBlank(message = "Full name is required") @Size(max = 100, message = "Full name cannot exceed 100 characters") String getFullName() {
-        return fullName;
-    }
-
     public Boolean getActive() {
         return isActive;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 
     public @Email(message = "Email should be valid") @NotBlank(message = "Email is required") String getEmail() {
@@ -124,10 +107,6 @@ public class User {
 
 
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setUsername(@NotBlank(message = "Username is required") @Size(min = 5, max = 30, message = "Username must be between 5 and 30 characters") String username) {
         this.username = username;
     }
@@ -140,16 +119,8 @@ public class User {
         this.email = email;
     }
 
-    public void setFullName(@NotBlank(message = "Full name is required") @Size(max = 100, message = "Full name cannot exceed 100 characters") String fullName) {
-        this.fullName = fullName;
-    }
-
     public void setActive(Boolean active) {
         isActive = active;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
@@ -158,22 +129,14 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles.clear();
-
-        if (roles != null) {
-            for (Role role : roles) {
-                addRoles(role);
-            }
-        }
+        this.roles = roles;
     }
 
 
 
 
     public void addRoles(Role... roles) {
-        for (Role role : roles) {
-            role.setUser(this);
-            this.roles.add(role);
-        }
+        this.roles.addAll(Arrays.asList(roles));
     }
 
     public void removeRoles(Role... roles) {

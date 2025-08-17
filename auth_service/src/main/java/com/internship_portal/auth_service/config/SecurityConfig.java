@@ -1,11 +1,9 @@
 package com.internship_portal.auth_service.config;
 
-import com.internship_portal.auth_service.filter.JwtAuthFilter;
+import com.internship_portal.auth_service.jwt_auth.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,7 +24,7 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
     @Autowired
-    public SecurityConfig(@Lazy JwtAuthFilter jwtAuthFilter) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
     }
 
@@ -60,44 +58,6 @@ public class SecurityConfig {
         http.authorizeHttpRequests(configurer ->
                 configurer
                         .requestMatchers("/api/auth/**").permitAll()
-
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/users",
-                                "/api/users/admins",
-                                "/api/users/mentors",
-                                "/api/users/interns")
-                                .authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/users/*").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/users").authenticated()
-                        .requestMatchers(HttpMethod.PATCH, "/api/users/*").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/users/*").hasAnyAuthority("MENTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasAuthority("ADMIN")
-
-                        //only admins can create/manage internships
-                        .requestMatchers(HttpMethod.POST, "/api/v1/internships").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/internships/*").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/internships/*/status").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/internships/*").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/internships/**").authenticated()
-
-
-                        //tasks
-                        .requestMatchers(HttpMethod.GET,  "/api/v1/tasks/").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/tasks/").hasAnyAuthority("MENTOR","ADMIN")
-                        .requestMatchers(HttpMethod.PUT,  "/api/v1/tasks/").hasAnyAuthority("MENTOR","ADMIN")
-                        .requestMatchers(HttpMethod.PATCH,"/api/v1/tasks/").hasAnyAuthority("MENTOR","ADMIN")
-                        .requestMatchers(HttpMethod.DELETE,"/api/v1/tasks/").hasAnyAuthority("MENTOR","ADMIN")
-
-                        // Submissions
-                        .requestMatchers(HttpMethod.POST, "/api/v1/submissions/").hasAuthority("INTERN")
-                        .requestMatchers(HttpMethod.GET,  "/api/v1/submissions/").authenticated()
-                        .requestMatchers(HttpMethod.PATCH,"/api/v1/submissions/*/feedback").hasAnyAuthority("MENTOR","ADMIN")
-
-                        // Applications
-                        .requestMatchers(HttpMethod.POST, "/api/v1/applications/").hasAuthority("INTERN")
-                        .requestMatchers(HttpMethod.GET,  "/api/v1/applications/").authenticated()
-                        .requestMatchers(HttpMethod.PATCH,"/api/v1/applications/*/status").hasAnyAuthority("MENTOR","ADMIN")
-                        .anyRequest().authenticated()
         );
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

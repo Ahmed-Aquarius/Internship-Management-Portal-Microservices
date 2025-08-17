@@ -1,7 +1,7 @@
 package com.internship_portal.user_service.controller;
 
 import com.internship_portal.user_service.model.User;
-import com.internship_portal.user_service.service.UserServiceImpl;
+import com.internship_portal.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,59 +11,59 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserServiceImpl userServiceImpl;
+    private final UserService userService;
 
 
     @Autowired
-    public UserController(UserServiceImpl userServiceImpl) {
-        this.userServiceImpl = userServiceImpl;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
 
 
     @GetMapping()
     public List<User> getAllUsers() {
-        return userServiceImpl.findAllUsers();
+        return userService.findAllUsers();
     }
 
     @GetMapping("/admins")
     public List<User> getAllAdmins() {
-        return userServiceImpl.findAllAdmins();
+        return userService.findAllAdmins();
     }
 
     @GetMapping("/mentors")
     public List<User> getAllMentors() {
-        return userServiceImpl.findAllMentors();
+        return userService.findAllMentors();
     }
 
     @GetMapping("/interns")
     public List<User> getAllInterns() {
-        return userServiceImpl.findAllInterns();
+        return userService.findAllInterns();
     }
 
     @GetMapping("{id}")
     public User getUserById(@PathVariable Long id) {
-        return userServiceImpl.findUserById(id);
+        return userService.findUserById(id);
     }
 
     @PostMapping()
     public User createUser(@RequestBody User newUser) {
-        return userServiceImpl.addUser(newUser);
+        return userService.addUser(newUser);
     }
 
     @PutMapping("{id}")
     public User updateUserTotally(@PathVariable Long id, @RequestBody User updatedUser) {
-        return userServiceImpl.replaceUser(id, updatedUser);
+        return userService.replaceUser(id, updatedUser);
     }
 
     @PatchMapping("{id}")
     public User updateUserPartially(@PathVariable Long id, @RequestBody User patchPayLoad) {
-        return userServiceImpl.updateUser(id, patchPayLoad);
+        return userService.updateUser(id, patchPayLoad);
     }
 
     @DeleteMapping("{id}")
     public void deleteUser(@PathVariable Long id) {
-        userServiceImpl.deleteUser(id);
+        userService.deleteUser(id);
     }
 
 }

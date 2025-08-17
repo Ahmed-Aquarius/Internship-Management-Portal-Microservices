@@ -1,4 +1,4 @@
-package com.internship_portal.auth_service.exception;
+package com.internship_portal.auth_service.exception.auth;
 
 public class AuthorizationHeaderNotFoundException extends Exception {
     public AuthorizationHeaderNotFoundException() {

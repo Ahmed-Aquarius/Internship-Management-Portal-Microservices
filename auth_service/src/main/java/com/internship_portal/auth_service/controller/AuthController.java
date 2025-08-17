@@ -2,8 +2,8 @@ package com.internship_portal.auth_service.controller;
 
 import com.internship_portal.auth_service.dto.LoginDTO;
 import com.internship_portal.auth_service.model.User;
-import com.internship_portal.auth_service.service.AuthServiceImpl;
-//import com.example.internship_portal.service.UserService;
+import com.internship_portal.auth_service.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserService userService;
-    private final AuthServiceImpl authServiceImpl;
+    private final AuthService authService;
 
-    public AuthController(UserService userService, AuthServiceImpl authServiceImpl) {
-        this.userService = userService;
-        this.authServiceImpl = authServiceImpl;
+    @Autowired
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
 
@@ -24,14 +23,14 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
 
-        userService.addUser(user);
+        //make a call to the userService to add the new user
         return ResponseEntity.ok("User registered successfully!");
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody LoginDTO credentials) {
 
-        String jwtToken = authServiceImpl.authenticate(credentials);
+        String jwtToken = authService.authenticate(credentials);
         return ResponseEntity.ok(jwtToken);
     }
 }
