@@ -5,7 +5,6 @@ import com.internship_portal.user_service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -59,8 +58,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(User newUser) {
-
-        //add password validation and other validations
 
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 
@@ -183,8 +180,6 @@ public class UserServiceImpl implements UserService {
         targetUser.setFullName(userNewData.getFullName());
         targetUser.setActive(userNewData.getActive());
 
-        //targetUser.setRoles(userNewData.getRoles());
-
         Map<Long, Role> existingRolesById = targetUser.getRoles().stream()
                 .filter(r -> r.getId() != null)
                 .collect(Collectors.toMap(Role::getId, r -> r));
@@ -196,14 +191,18 @@ public class UserServiceImpl implements UserService {
                 Role existingRole = existingRolesById.get(newRole.getId());
                 existingRole.setRole(newRole.getRole());
 
-                if (existingRole instanceof Mentor && newRole instanceof Mentor) {
-                    ((Mentor) existingRole).setPosition(((Mentor) newRole).getPosition());
-                    ((Mentor) existingRole).setCompany(((Mentor) newRole).getCompany());
-                } else if (existingRole instanceof Intern && newRole instanceof Intern) {
-                    ((Intern) existingRole).setSchool(((Intern) newRole).getSchool());
-                    ((Intern) existingRole).setSkills(((Intern) newRole).getSkills());
-                } else if (existingRole instanceof Admin && newRole instanceof Admin) {
-                    ((Admin) existingRole).setCompany(((Admin) newRole).getCompany());
+                switch (existingRole) {
+                    case Mentor mentor when newRole instanceof Mentor -> {
+                        mentor.setPosition(((Mentor) newRole).getPosition());
+                        mentor.setCompany(((Mentor) newRole).getCompany());
+                    }
+                    case Intern intern when newRole instanceof Intern -> {
+                        intern.setSchool(((Intern) newRole).getSchool());
+                        intern.setSkills(((Intern) newRole).getSkills());
+                    }
+                    case Admin admin when newRole instanceof Admin -> admin.setCompany(((Admin) newRole).getCompany());
+                    default -> {
+                    }
                 }
 
                 updatedRoles.add(existingRole);

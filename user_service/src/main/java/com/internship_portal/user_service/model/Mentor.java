@@ -32,22 +32,4 @@ public class Mentor extends Role {
         super(Role.RoleName.MENTOR);
     }
 
-
-
-    public String getCompany() {
-        return company;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-
-    public void setCompany(String companyName) {
-        this.company = companyName;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
 }

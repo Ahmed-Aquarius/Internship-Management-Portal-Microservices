@@ -53,32 +53,6 @@ public abstract class Role {
     public Role() {}
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public RoleName getRole() {
-        return role;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setRole(RoleName role) {
-        this.role = role;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-
 
     public enum RoleName {
         INTERN, MENTOR, ADMIN

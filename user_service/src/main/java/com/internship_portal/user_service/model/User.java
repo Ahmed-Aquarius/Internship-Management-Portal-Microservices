@@ -85,10 +85,6 @@ public class User {
 
 
 
-    public Long getId() {
-        return id;
-    }
-
     public @NotBlank(message = "Username is required") @Size(min = 5, max = 30, message = "Username must be between 5 and 30 characters") String getUsername() {
         return username;
     }
@@ -105,14 +101,6 @@ public class User {
         return isActive;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
     public @Email(message = "Email should be valid") @NotBlank(message = "Email is required") String getEmail() {
         return email;
     }
@@ -123,10 +111,6 @@ public class User {
 
 
 
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public void setUsername(@NotBlank(message = "Username is required") @Size(min = 5, max = 30, message = "Username must be between 5 and 30 characters") String username) {
         this.username = username;
@@ -146,10 +130,6 @@ public class User {
 
     public void setActive(Boolean active) {
         isActive = active;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {

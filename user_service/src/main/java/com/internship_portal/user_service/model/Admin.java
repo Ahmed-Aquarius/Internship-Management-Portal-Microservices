@@ -27,14 +27,4 @@ public class Admin extends Role {
         super(Role.RoleName.ADMIN);
     }
 
-
-
-    public String getCompany() {
-        return company;
-    }
-
-
-    public void setCompany(String companyName) {
-        this.company = companyName;
-    }
 }

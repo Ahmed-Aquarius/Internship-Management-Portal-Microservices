@@ -7,30 +7,30 @@ import java.util.List;
 
 public interface UserService {
 
-    public List<User> findAllUsers ();
+    List<User> findAllUsers();
 
-    public List<User> findAllAdmins ();
+    List<User> findAllAdmins();
 
-    public List<User> findAllMentors ();
+    List<User> findAllMentors();
 
-    public List<User> findAllInterns ();
-
-
-    public User findUserById(Long id);
-
-    public User findUserByUsername(String username);
+    List<User> findAllInterns();
 
 
-    @Transactional
-    public User addUser(User newUser);
+    User findUserById(Long id);
+
+    User findUserByUsername(String username);
+
 
     @Transactional
-    public User updateUser(Long userId, User patchPayLoad);
+    User addUser(User newUser);
 
     @Transactional
-    public User replaceUser(Long userId, User userNewData);
+    User updateUser(Long userId, User patchPayLoad);
 
     @Transactional
-    public void deleteUser (Long userID);
+    User replaceUser(Long userId, User userNewData);
+
+    @Transactional
+    void deleteUser(Long userID);
 
 }

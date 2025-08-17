@@ -38,22 +38,4 @@ public class Intern extends Role {
         super(Role.RoleName.INTERN);
     }
 
-
-
-    public String getSchool() {
-        return school;
-    }
-
-    public Set<String> getSkills() {
-        return skills;
-    }
-
-
-    public void setSchool(String school) {
-        this.school = school;
-    }
-
-    public void setSkills(Set<String> skills) {
-        this.skills = skills;
-    }
 }
