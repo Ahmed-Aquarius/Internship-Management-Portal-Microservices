@@ -28,25 +28,28 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+        // Use DelegatingPasswordEncoder to match the User Service password encoding
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-//        http.authorizeHttpRequests(configurer ->
-//                configurer
-//                        .requestMatchers("/api/auth/**").permitAll()
-//        );
-//
-//        //http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//
-//        http.httpBasic(Customizer.withDefaults());
-//
-//        http.csrf(csrf -> csrf.disable());
-//
-//        return http.build();
-//    }
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(configurer ->
+                configurer
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated()
+        );
+
+        // Add JWT filter before UsernamePasswordAuthenticationFilter
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.httpBasic(Customizer.withDefaults());
+
+        http.csrf(csrf -> csrf.disable());
+
+        return http.build();
+    }
 }

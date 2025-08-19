@@ -35,13 +35,15 @@ public class User {
 
     protected Set<Role> roles = new HashSet<>();
 
-
-
     public enum Role {
         INTERN, MENTOR, ADMIN
     }
 
 
+
+    public User() {
+        // Default constructor for JPA and JSON deserialization
+    }
 
     public User(String username, String password, String email) {
         this.username = username;

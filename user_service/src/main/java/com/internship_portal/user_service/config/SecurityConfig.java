@@ -53,32 +53,37 @@ public class SecurityConfig {
         return UserDetailsManager;
     }
 
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-//        http.authorizeHttpRequests(configurer ->
-//                configurer
-//                        .requestMatchers(HttpMethod.GET,
-//                                "/api/users",
-//                                "/api/users/admins",
-//                                "/api/users/mentors",
-//                                "/api/users/interns")
-//                        .permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/users/*").hasAuthority("ADMIN")
-//                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-//                        .requestMatchers(HttpMethod.PATCH, "/api/users/*").authenticated()
-//                        .requestMatchers(HttpMethod.PUT, "/api/users/*").hasAnyAuthority("MENTOR", "ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasAuthority("ADMIN")
-//        );
-//
-//        //http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//
-//        http.httpBasic(Customizer.withDefaults());
-//
-//        http.csrf(csrf -> csrf.disable());
-//
-//        return http.build();
-//    }
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(configurer ->
+                configurer
+                        // Specific patterns first (more specific rules have precedence)
+                        .requestMatchers(HttpMethod.GET, "/api/users/username/*").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/users",
+                                "/api/users/admins",
+                                "/api/users/mentors",
+                                "/api/users/interns")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        // More general patterns last
+                        .requestMatchers(HttpMethod.GET, "/api/users/*").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/users/*").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/users/*").hasAnyAuthority("MENTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasAuthority("ADMIN")
+                        .anyRequest().authenticated()
+        );
+
+        // Add JWT filter before UsernamePasswordAuthenticationFilter
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.httpBasic(Customizer.withDefaults());
+
+        http.csrf(csrf -> csrf.disable());
+
+        return http.build();
+    }
 }

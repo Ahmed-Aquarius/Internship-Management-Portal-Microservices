@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/users")
@@ -45,13 +46,13 @@ public class UserController {
         return userService.findAllInterns();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return userService.findUserById(id);
     }
 
-    @GetMapping("{username}")
-    public UserCredentialsDTO getUserSecurityDetails (@PathVariable String username) {
+    @GetMapping("/username/{username}")
+    public User getUserByUsername(@PathVariable String username) {
 
         User targetUser = userService.findUserByUsername(username);
 
@@ -59,7 +60,7 @@ public class UserController {
             throw new NoSuchUserException("no user with this username was found");
         }
 
-        return new UserCredentialsDTO(username, targetUser.getPassword());
+        return targetUser;
     }
 
     @PostMapping()
@@ -80,6 +81,19 @@ public class UserController {
     @DeleteMapping("{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+    }
+
+    // made for internship service to get user roles
+    @GetMapping("/{id}/roles")
+    public Set<String> getUserRoles(@PathVariable Long id) {
+        User user = userService.findUserById(id);
+        if (user == null) {
+            throw new NoSuchUserException("User not found with id: " + id);
+        }
+        
+        return user.getRoles().stream()
+                .map(role -> role.getRole().name())
+                .collect(java.util.stream.Collectors.toSet());
     }
 
 }

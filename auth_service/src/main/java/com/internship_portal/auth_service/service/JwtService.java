@@ -22,11 +22,9 @@ public class JwtService {
 
 
 
-    public String generateToken(String username, Set<User.Role> roles) {
+    public String generateToken(String username, Set<String> roles) {
 
-        List<String> rolesAsString = roles.stream()
-                .map(User.Role::name)
-                .toList();
+        List<String> rolesAsString = new ArrayList<>(roles);
 
         return Jwts.builder()
                 .setSubject(username)

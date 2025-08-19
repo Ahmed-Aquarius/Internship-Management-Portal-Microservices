@@ -27,15 +27,16 @@ public class Intern extends Role {
     public Intern(User user, Role.RoleName role, String school, Set<String> skills) {
         super(user, role);
         this.school = school;
-        this.skills = skills;
+        this.skills = skills != null ? skills : new HashSet<>();
     }
 
     public Intern(User user, Role.RoleName role) {
-        this(user, role, null, null);
+        this(user, role, null, new HashSet<>());
     }
 
     public Intern () {
         super(Role.RoleName.INTERN);
+        this.skills = new HashSet<>();
     }
 
 }

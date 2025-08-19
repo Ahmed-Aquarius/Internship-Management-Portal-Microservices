@@ -42,6 +42,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throws IOException {
 
         try {
+            
+            // skipJWT validation for public endpoints
+            String requestPath = request.getRequestURI();
+            System.out.println("JWT Filter checking path: " + requestPath);
+            if (isPublicEndpoint(requestPath)) {
+                System.out.println("Skipping JWT validation for public endpoint: " + requestPath);
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             // if user is already authorized, don't re-authorize
             if (SecurityContextHolder.getContext().getAuthentication() != null)
@@ -82,5 +91,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             System.out.println("JWT Filter Error: " + e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
         }
+    }
+    
+    private boolean isPublicEndpoint(String requestPath) {
+        return requestPath.startsWith("/api/users/username/") ||
+               requestPath.equals("/api/users") ||
+               requestPath.equals("/api/users/admins") ||
+               requestPath.equals("/api/users/mentors") ||
+               requestPath.equals("/api/users/interns") ||
+               (requestPath.equals("/api/users") && "POST".equals("POST")); // For user registration
     }
 }

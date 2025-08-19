@@ -2,6 +2,7 @@ package com.internship_portal.auth_service.controller;
 
 import com.internship_portal.auth_service.dto.UserCredentialsDTO;
 import com.internship_portal.auth_service.dto.RegisterUserDTO;
+import com.internship_portal.auth_service.dto.UserDto;
 import com.internship_portal.auth_service.model.User;
 import com.internship_portal.auth_service.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,14 +52,19 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody UserCredentialsDTO inputCredentials) {
 
-        User targetUser = webClientBuilder.build()
+        // Get the full user by username from User Service (temporary hard-coded for testing)
+        UserDto.Response userResponse = webClientBuilder.build()
                 .get()
-                .uri("http://USER_SERVICE/api/users/" + inputCredentials.username())
+                .uri("http://localhost:8082/api/users/username/" + inputCredentials.username())
                 .retrieve()
-                .bodyToMono(User.class)
+                .bodyToMono(UserDto.Response.class)
                 .block();
 
-        String jwtToken = authService.authenticate(inputCredentials, targetUser);
+        if (userResponse == null) {
+            return ResponseEntity.status(401).body("Invalid username or password");
+        }
+
+        String jwtToken = authService.authenticate(inputCredentials, userResponse);
 
         return ResponseEntity.ok(jwtToken);
     }
