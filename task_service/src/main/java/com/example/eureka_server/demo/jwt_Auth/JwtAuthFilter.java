@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import com.example.eureka_server.demo.exception.auth.AuthorizationHeaderNotFoundException;
+import com.example.eureka_server.demo.exception.auth.InvalidJwtTokenException;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -44,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // extract auth header
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new com.internship_portal.auth_service.exception.auth.AuthorizationHeaderNotFoundException();
+                throw new com.example.eureka_server.demo.exception.auth.AuthorizationHeaderNotFoundException();
             }
 
             // extract user details from the token extracted from header
@@ -63,7 +65,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } else {
-                throw new com.internship_portal.auth_service.exception.auth.InvalidJwtTokenException();
+                throw new com.example.eureka_server.demo.exception.auth.InvalidJwtTokenException();
             }
 
             filterChain.doFilter(request, response);

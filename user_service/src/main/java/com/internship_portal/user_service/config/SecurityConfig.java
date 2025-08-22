@@ -67,11 +67,15 @@ public class SecurityConfig {
                                 "/api/users/interns")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                        // More general patterns last
-                        .requestMatchers(HttpMethod.GET, "/api/users/*").hasAuthority("ADMIN")
+                        // Allow inter-service calls to get user info - MUST come before general patterns
+                        .requestMatchers(HttpMethod.GET, "/api/users/*/roles").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/{id}").permitAll() // Allow /api/users/{id} for inter-service calls
+                        .requestMatchers(HttpMethod.GET, "/api/users/[0-9]+").permitAll()
+                        // More general patterns last - these will override the specific ones above
                         .requestMatchers(HttpMethod.PATCH, "/api/users/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/users/*").hasAnyAuthority("MENTOR", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/users/*").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
         );
 

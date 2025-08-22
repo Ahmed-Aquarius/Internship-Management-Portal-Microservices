@@ -2,6 +2,7 @@ package com.example.eureka_server.demo.Controller;
 
 import com.example.eureka_server.demo.dto.TaskDto;
 import com.example.eureka_server.demo.services.TaskService;
+import com.example.eureka_server.demo.exception.BadRequestException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;

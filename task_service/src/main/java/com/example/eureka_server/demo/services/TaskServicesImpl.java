@@ -35,7 +35,7 @@ public class TaskServicesImpl implements TaskService {
      */
     private void assertInternshipExists(Long internshipId) {
         try {
-            var _ = internshipClient.getById(internshipId); // body not used; 200 => exists
+            var response = internshipClient.getById(internshipId); // body not used; 200 => exists
         } catch (FeignException.NotFound nf) {
             throw new ResourceNotFoundException("Internship not found: " + internshipId);
         } catch (FeignException fx) {

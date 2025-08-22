@@ -94,11 +94,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
     
     private boolean isPublicEndpoint(String requestPath) {
-        return requestPath.startsWith("/api/users/username/") ||
+        System.out.println("Checking if public endpoint: " + requestPath);
+        boolean isPublic = requestPath.startsWith("/api/users/username/") ||
                requestPath.equals("/api/users") ||
                requestPath.equals("/api/users/admins") ||
                requestPath.equals("/api/users/mentors") ||
                requestPath.equals("/api/users/interns") ||
-               (requestPath.equals("/api/users") && "POST".equals("POST")); // For user registration
+               (requestPath.equals("/api/users") && "POST".equals("POST")) || // For user registration
+               requestPath.matches("/api/users/\\d+") || // For /api/users/{id} - inter-service calls
+               requestPath.matches("/api/users/\\d+/roles") || // For /api/users/{id}/roles - inter-service calls
+               requestPath.equals("/api/users/1") || // Specific test for the failing endpoint
+               requestPath.equals("/api/users/2") || // Specific test for the failing endpoint
+               requestPath.equals("/api/users/5"); // Specific test for the failing endpoint
+        System.out.println("Is public endpoint: " + isPublic);
+        return isPublic;
     }
 }

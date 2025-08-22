@@ -38,7 +38,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new ResourceNotFoundException("Internship not found");
         }
         
-        if (!"ACTIVE".equals(internship.status()) || !internship.isActive()) {
+        if (!"OPEN".equals(internship.status()) || !internship.isActive()) {
             throw new BadRequestException("Internship is not open for applications");
         }
         

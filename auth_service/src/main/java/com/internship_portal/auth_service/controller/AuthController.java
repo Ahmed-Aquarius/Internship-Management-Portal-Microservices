@@ -40,9 +40,9 @@ public class AuthController {
 //                .block();
 //user-service
 
-        //restTemplate.getForEntity("http://localhost:8082/api/users/admins", RegisterUserDTO.class);
+        //restTemplate.getForEntity("http://localhost:8087/api/users/admins", RegisterUserDTO.class);
 
-        RegisterUserDTO generatedUser = restTemplate.postForEntity("http://localhost:8082/api/users", userDetails, RegisterUserDTO.class).getBody();
+        RegisterUserDTO generatedUser = restTemplate.postForEntity("http://localhost:8087/api/users", userDetails, RegisterUserDTO.class).getBody();
 
         String response = "User registered successfully!\n\n" + "the created user in the db is:\n" + generatedUser;
 
@@ -55,7 +55,7 @@ public class AuthController {
         // Get the full user by username from User Service (temporary hard-coded for testing)
         UserDto.Response userResponse = webClientBuilder.build()
                 .get()
-                .uri("http://localhost:8082/api/users/username/" + inputCredentials.username())
+                .uri("http://localhost:8087/api/users/username/" + inputCredentials.username())
                 .retrieve()
                 .bodyToMono(UserDto.Response.class)
                 .block();

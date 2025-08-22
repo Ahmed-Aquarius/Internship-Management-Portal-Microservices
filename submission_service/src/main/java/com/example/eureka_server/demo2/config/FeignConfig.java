@@ -27,8 +27,11 @@ public class FeignConfig {
                     String authHeader = request.getHeader("Authorization");
                     
                     if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                        // Forward the JWT token to the User Service
-                        template.header("Authorization", authHeader);
+                        // Only forward JWT token to services that support it
+                        // User Service doesn't support JWT, so don't forward to it
+                        if (!template.url().contains("user-service") && !template.url().contains("localhost:8087")) {
+                            template.header("Authorization", authHeader);
+                        }
                     }
                 }
             }

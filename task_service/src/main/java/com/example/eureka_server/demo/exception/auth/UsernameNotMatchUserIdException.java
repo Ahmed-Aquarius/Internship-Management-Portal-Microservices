@@ -1,4 +1,4 @@
-package com.internship_portal.auth_service.exception.auth;
+package com.example.eureka_server.demo.exception.auth;
 
 public class UsernameNotMatchUserIdException extends RuntimeException {
     public UsernameNotMatchUserIdException() {

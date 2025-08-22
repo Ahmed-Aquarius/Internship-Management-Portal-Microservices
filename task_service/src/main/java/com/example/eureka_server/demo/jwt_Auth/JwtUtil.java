@@ -1,7 +1,7 @@
 package com.example.eureka_server.demo.jwt_Auth;
 
-import com.internship_portal.auth_service.exception.auth.TokenExpiredException;
-import com.internship_portal.auth_service.exception.auth.UsernameNotMatchUserIdException;
+import com.example.eureka_server.demo.exception.auth.TokenExpiredException;
+import com.example.eureka_server.demo.exception.auth.UsernameNotMatchUserIdException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
